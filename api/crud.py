@@ -18,3 +18,11 @@ async def get_file_from_db(
     id: str,
 ) -> FileInDB:
     return await session.get(FileInDB, ident=id)
+
+
+async def delete_field_from_db(
+    session: AsyncSession,
+    file: FileInDB,
+):
+    await session.delete(file)
+    await session.commit()
