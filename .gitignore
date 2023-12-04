@@ -2,3 +2,4 @@
 .env
 vemv/
 poetry.lock
+storage/

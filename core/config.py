@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     DB_PASS: str
     DB_NAME: str
     db_echo: str
+    
+    STORAGE_DIR_NAME: str = "storage"
 
     @property
     def DATABASE_URI(self):
