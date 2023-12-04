@@ -16,6 +16,7 @@ from core.config import settings
 from .crud import get_file_from_db, upload_file_in_db
 from .schemas import FileType
 from models import db_helper
+from .utils import upload_file_to_dir
 
 router = APIRouter()
 
@@ -25,18 +26,31 @@ async def upload_file(
     file: Annotated[UploadFile, File()],
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    file_in_db = await upload_file_in_db(
-        session=session,
-        filename=file.filename,
-    )
+    return await upload_file_to_dir(file=file, session=session, dir="other")
 
-    with open(f"{settings.STORAGE_DIR_NAME}/track/{file_in_db.id}", "wb") as nf:
-        nf.write(await file.read())
 
-    return {
-        "path": f"/track/{file_in_db.id}",
-        "name": file.filename,
-    }
+@router.post("/upload-track/")
+async def upload_track(
+    file: Annotated[UploadFile, File()],
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+    return await upload_file_to_dir(file=file, session=session, dir="track")
+
+
+@router.post("/upload-image/")
+async def upload_file(
+    file: Annotated[UploadFile, File()],
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+    return await upload_file_to_dir(file=file, session=session, dir="image")
+
+
+@router.post("/upload-video/")
+async def upload_file(
+    file: Annotated[UploadFile, File()],
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+    return await upload_file_to_dir(file=file, session=session, dir="video")
 
 
 @router.get("/{filetype}/{file_id}")
