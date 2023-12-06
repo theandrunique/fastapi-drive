@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, Path, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
+import aiofiles
 
 from core.config import settings
 from models import FileInDB
@@ -11,17 +12,21 @@ from models import db_helper
 
 async def upload_file_to_dir(
     file: UploadFile,
-    session: AsyncSession,
-    dir: str,
+    session: AsyncSession
 ):
     file_in_db = await upload_file_in_db(
         session=session,
         filename=file.filename,
     )
-    with open(f"{settings.STORAGE_DIR_NAME}/{dir}/{file_in_db.id}", "wb") as nf:
-        nf.write(await file.read())
+    async with aiofiles.open(
+        f"{settings.STORAGE_DIR_NAME}/{file_in_db.id}",
+        "wb",
+    ) as nf:
+        await nf.write(await file.read())
+
     return {
-        "url": f"/{dir}/{file_in_db.id}",
+        "id": file_in_db.id,
+        "url": f"/{file_in_db.id}",
         "filename": file.filename,
     }
 

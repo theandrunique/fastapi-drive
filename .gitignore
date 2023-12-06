@@ -3,3 +3,4 @@
 vemv/
 poetry.lock
 storage/
+alembic/versions/
