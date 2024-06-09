@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from src.api.file_storage import router as file_storage_router
 
 app = FastAPI()

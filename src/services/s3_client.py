@@ -1,10 +1,10 @@
 from contextlib import asynccontextmanager
+
 from aiobotocore.session import get_session
 
-from .base.base_s3_client import BaseS3Client
-
-
 from src.config import config
+
+from .base.base_s3_client import BaseS3Client
 
 
 class S3Session:
