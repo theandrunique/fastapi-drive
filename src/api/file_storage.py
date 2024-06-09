@@ -1,7 +1,10 @@
+from uuid import uuid4
+
 from fastapi import APIRouter, UploadFile
 
 from src.schemas import FileUploadedResponse
 from src.services.s3_client import S3Session
+from src.utils import get_file_category
 
 router = APIRouter()
 
@@ -12,7 +15,8 @@ async def upload_file(files: list[UploadFile]) -> FileUploadedResponse:
 
     for file in files:
         async with S3Session().client() as client:
-            result = await client.put(file.filename, await file.read())
+            key = f"{get_file_category(file.content_type)}/{uuid4()}-{file.filename}"
+            result = await client.put(key, await file.read())
             uploaded_files[file.filename] = result
 
     return FileUploadedResponse(files=uploaded_files)
